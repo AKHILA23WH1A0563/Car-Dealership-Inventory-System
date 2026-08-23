@@ -60,4 +60,17 @@ describe("POST /api/auth/register", () => {
   expect(response.status).toBe(400);
   expect(response.body.message).toBe("User already exists");
 });
+it("should not store the password as plain text", async () => {
+  const response = await request(app)
+    .post("/api/auth/register")
+    .send({
+      name: "Secure User",
+      email: "secure@example.com",
+      password: "Password@123",
+    });
+
+  expect(response.status).toBe(201);
+
+  expect(response.body.user).not.toHaveProperty("password");
+});
 });
