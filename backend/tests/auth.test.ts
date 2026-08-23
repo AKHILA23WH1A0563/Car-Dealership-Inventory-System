@@ -40,4 +40,24 @@ describe("POST /api/auth/register", () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("User already exists");
   });
+  it("should reject registration with an existing email", async () => {
+  await request(app)
+    .post("/api/auth/register")
+    .send({
+      name: "First User",
+      email: "duplicate@example.com",
+      password: "Password@123",
+    });
+
+  const response = await request(app)
+    .post("/api/auth/register")
+    .send({
+      name: "Second User",
+      email: "duplicate@example.com",
+      password: "Password@456",
+    });
+
+  expect(response.status).toBe(400);
+  expect(response.body.message).toBe("User already exists");
+});
 });
