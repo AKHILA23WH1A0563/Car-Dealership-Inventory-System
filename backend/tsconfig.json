@@ -15,7 +15,7 @@
   "include": [
     "src/**/*.ts",
     "tests/**/*.ts"
-  ],
+, "tests/auth.middleware.test.ts"  ],
   "exclude": [
     "node_modules",
     "dist"
