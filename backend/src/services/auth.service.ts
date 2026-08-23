@@ -1,28 +1,25 @@
-import { randomUUID } from "crypto";
-import { User } from "../models/user";
+import bcrypt from "bcrypt";
+import { UserModel } from "../models/user";
 
-const users: User[] = [];
-
-export const registerUser = (
+export const registerUser = async (
   name: string,
   email: string,
   password: string
-): User => {
-  const existingUser = users.find((user) => user.email === email);
+) => {
+  const existingUser = await UserModel.findOne({ email });
 
   if (existingUser) {
     throw new Error("User already exists");
   }
 
-  const user: User = {
-    id: randomUUID(),
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await UserModel.create({
     name,
     email,
-    password,
+    password: hashedPassword,
     role: "user",
-  };
-
-  users.push(user);
+  });
 
   return user;
 };
