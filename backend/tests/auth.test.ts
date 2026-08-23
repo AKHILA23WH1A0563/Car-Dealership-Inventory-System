@@ -98,3 +98,47 @@ it("should hash the password before saving", async () => {
 });
 
 });
+describe("POST /api/auth/login", () => {
+  it("should login with valid credentials", async () => {
+    await request(app)
+      .post("/api/auth/register")
+      .send({
+        name: "Login User",
+        email: "login@example.com",
+        password: "Password@123",
+      });
+
+    const response = await request(app)
+      .post("/api/auth/login")
+      .send({
+        email: "login@example.com",
+        password: "Password@123",
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("Login successful");
+    expect(response.body).toHaveProperty("user");
+    expect(response.body.user.email).toBe("login@example.com");
+  });
+  it("should return a JWT token after successful login", async () => {
+  await request(app)
+    .post("/api/auth/register")
+    .send({
+      name: "JWT User",
+      email: "jwt@example.com",
+      password: "Password@123",
+    });
+
+  const response = await request(app)
+    .post("/api/auth/login")
+    .send({
+      email: "jwt@example.com",
+      password: "Password@123",
+    });
+
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty("token");
+  expect(typeof response.body.token).toBe("string");
+  expect(response.body.token.length).toBeGreaterThan(0);
+});
+});
